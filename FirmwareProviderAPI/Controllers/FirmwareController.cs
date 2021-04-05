@@ -9,31 +9,36 @@ namespace FirmwareProviderAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase
+    public class FirmwareController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        private readonly ILogger<WeatherForecastController> _logger;
-
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        private readonly ILogger<FirmwareController> _logger;
+        
+        public FirmwareController(ILogger<FirmwareController> logger)
         {
             _logger = logger;
         }
 
+        // GET: /firmware
         [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+        [Route("/[controller]")]
+        public async Task<ActionResult<IEnumerable<Firmware>>> GetAll()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateTime.Now.AddDays(index),
-                    TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
-                })
-                .ToArray();
+            return FirmwareIndexer.Firmwares.ToList();
+        }
+        
+        // GET: /firmware/download/r175xxu0atf2
+        [HttpGet("/[controller]/download/{build}")]
+        public async Task<ActionResult> Download(string build)
+        {
+            try
+            {
+                var fw = FirmwareIndexer.Firmwares.First(x => x.BuildName == build);
+                return new FileContentResult(await System.IO.File.ReadAllBytesAsync(fw.Path), "application/octet-stream");
+            }
+            catch (Exception)
+            {
+                return new NotFoundResult();
+            }
         }
     }
 }

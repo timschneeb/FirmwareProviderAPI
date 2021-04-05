@@ -2,6 +2,10 @@
 {
     public enum Models
     {
-        
+        Unknown,
+        Buds,
+        BudsPlus,
+        BudsLive,
+        BudsPro
     }
 }
