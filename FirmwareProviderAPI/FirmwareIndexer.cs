@@ -49,6 +49,9 @@ namespace FirmwareProviderAPI
                 .Select(BuildFirmware)
                 .Where(x => x != null)
                 .Cast<Firmware>()
+                .OrderByDescending(x => x.Year)
+                .ThenByDescending(x => x.Month)
+                .ThenByDescending(x => x.Revision)
                 .ToList();
         }
 
