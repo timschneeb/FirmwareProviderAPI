@@ -54,6 +54,7 @@ namespace FirmwareProviderAPI
                     "R175" => Models.BudsPlus,
                     "R180" => Models.BudsLive,
                     "R190" => Models.BudsPro,
+                    "R177" => Models.Buds2,
                     _ => Models.Unknown
                 };
                 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using Microsoft.Extensions.FileProviders;
@@ -12,6 +11,7 @@ namespace FirmwareProviderAPI
     {
         private static PhysicalFileProvider? _fileProvider;
         private static IChangeToken? _fileChangeToken;
+        private static readonly DmFirmwareDownloader DmFirmwareDownloader = new DmFirmwareDownloader();
 
         private static readonly string RootPath = Path.Combine(Directory.GetCurrentDirectory(), "Firmware");
 
@@ -19,6 +19,7 @@ namespace FirmwareProviderAPI
         
         public static void Init()
         {
+            DmFirmwareDownloader.Resume();
             _fileProvider = new PhysicalFileProvider(RootPath);
             Rescan();
             WatchForFileChanges();
