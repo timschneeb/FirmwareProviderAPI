@@ -18,6 +18,8 @@ namespace FirmwareProviderAPI
         
         public static void Init()
         {
+            Directory.CreateDirectory("Firmware/");
+            
             FirmwareScraper.Resume();
             _fileProvider = new PhysicalFileProvider(RootPath);
             Rescan();
