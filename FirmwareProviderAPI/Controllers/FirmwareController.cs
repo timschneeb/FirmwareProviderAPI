@@ -26,6 +26,14 @@ namespace FirmwareProviderAPI.Controllers
             return FirmwareIndexer.Firmwares.ToList();
         }
         
+        // GET: /firmware/buds
+        [HttpGet]
+        [Route("/[controller]/{model}")]
+        public async Task<ActionResult<IEnumerable<Firmware>>> Get(Models model)
+        {
+            return FirmwareIndexer.Firmwares.Where(x => x.Model == model).ToList();
+        }
+        
         // GET: /firmware/download/r175xxu0atf2
         [HttpGet("/[controller]/download/{build}")]
         public async Task<ActionResult> Download(string build)

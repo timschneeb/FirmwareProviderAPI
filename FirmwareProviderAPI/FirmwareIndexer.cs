@@ -11,15 +11,14 @@ namespace FirmwareProviderAPI
     {
         private static PhysicalFileProvider? _fileProvider;
         private static IChangeToken? _fileChangeToken;
-        private static readonly DmFirmwareDownloader DmFirmwareDownloader = new DmFirmwareDownloader();
-
         private static readonly string RootPath = Path.Combine(Directory.GetCurrentDirectory(), "Firmware");
-
+        private static readonly FirmwareScraper FirmwareScraper = new(RootPath);
+        
         public static IReadOnlyList<Firmware> Firmwares = new List<Firmware>();
         
         public static void Init()
         {
-            DmFirmwareDownloader.Resume();
+            FirmwareScraper.Resume();
             _fileProvider = new PhysicalFileProvider(RootPath);
             Rescan();
             WatchForFileChanges();
@@ -29,24 +28,22 @@ namespace FirmwareProviderAPI
         {
             if (_fileProvider == null)
             {
-                Console.WriteLine("Warning: FileProvider not ready");
                 return;
             }
             
-            _fileChangeToken = _fileProvider.Watch("*.bin");
+            _fileChangeToken = _fileProvider.Watch("FOTA_*.bin");
             _fileChangeToken.RegisterChangeCallback(Notify, default);
         }
         
         private static void Notify(object state)
         {
-            Console.WriteLine($"Update detected");
             Rescan();
             WatchForFileChanges();
         }
 
         private static void Rescan()
         {
-            Firmwares = new DirectoryInfo(RootPath).GetFiles("*.bin")
+            Firmwares = new DirectoryInfo(RootPath).GetFiles("FOTA_*.bin")
                 .Select(BuildFirmware)
                 .Where(x => x != null)
                 .Cast<Firmware>()
