@@ -1,6 +1,11 @@
 # FirmwareProviderAPI
 Unofficial distribution API for Galaxy Buds firmware binaries with built-in FW scraping capabilities
 
+I'm currently hosting an API instance here. I do not provide any uptime guarantee for this server.
+```
+https://fw.timschneeberger.me/v2/{endpoint}
+```
+
 ## API reference
 
 ### List all available firmware including metadata
