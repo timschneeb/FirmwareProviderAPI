@@ -8,36 +8,34 @@ using Microsoft.Extensions.Logging;
 namespace FirmwareProviderAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class FirmwareController : ControllerBase
+    [Route("v2")]
+    public class FirmwareV2Controller : ControllerBase
     {
         private readonly ILogger<FirmwareController> _logger;
         
-        public FirmwareController(ILogger<FirmwareController> logger)
+        public FirmwareV2Controller(ILogger<FirmwareController> logger)
         {
             _logger = logger;
         }
 
-        // GET: /firmware
+        // GET: /v2/firmware
         [HttpGet]
-        [Route("/[controller]")]
+        [Route("/v2/firmware")]
         public async Task<ActionResult<IEnumerable<Firmware>>> GetAll()
         {
-            return FirmwareIndexer.Firmwares
-                .Where(x => x.Model is Models.Buds or Models.BudsPlus or Models.BudsLive or Models.BudsPro)
-                .ToList();
+            return FirmwareIndexer.Firmwares.ToList();
         }
         
-        // GET: /firmware/buds
+        // GET: /v2/firmware/buds
         [HttpGet]
-        [Route("/[controller]/{model}")]
+        [Route("/v2/firmware/{model}")]
         public async Task<ActionResult<IEnumerable<Firmware>>> Get(Models model)
         {
             return FirmwareIndexer.Firmwares.Where(x => x.Model == model).ToList();
         }
         
-        // GET: /firmware/download/r175xxu0atf2
-        [HttpGet("/[controller]/download/{build}")]
+        // GET: /v2/firmware/download/r175xxu0atf2
+        [HttpGet("/v2/firmware/download/{build}")]
         public async Task<ActionResult> Download(string build)
         {
             try
