@@ -7,6 +7,7 @@
         BudsPlus,
         BudsLive,
         BudsPro,
-        Buds2
+        Buds2,
+        Buds2Pro
     }
 }
