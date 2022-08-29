@@ -51,6 +51,7 @@ namespace FirmwareProviderAPI
             CheckForUpdateFumo("SM-R180");
             CheckForUpdateFumo("SM-R190");
             CheckForUpdateFumo("SM-R177");
+            CheckForUpdateFumo("SM-R510");
         }
 
         #region OMA-DM FUMO server
