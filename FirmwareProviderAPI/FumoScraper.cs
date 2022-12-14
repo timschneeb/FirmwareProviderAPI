@@ -130,7 +130,7 @@ namespace FirmwareProviderAPI
                 // Process and respond to GET request
                 var dataSource = ArrayUtils.ConcatArray(
                     session.Device.AsDevInfNodes(),
-                    session.Device.AsDevDetailNodes()
+                    await session.Device.AsDevDetailNodes()
                 );
                 var getResultCmds = SyncMlUtils.BuildGetResults(initialRequest, dataSource, 2);
 
