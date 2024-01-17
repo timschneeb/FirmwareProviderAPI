@@ -45,6 +45,36 @@ namespace FirmwareProviderCLI
                 .ThenByDescending(x => x.Revision)
                 .GroupBy(x => x.ModelString)
                 .ToList();
+
+
+            foreach (var model in firmware)
+            {
+                var modelDirectory = Path.Combine(RootPath, model.Key);
+                if (!Directory.Exists(modelDirectory))
+                {
+                    Directory.CreateDirectory(modelDirectory);
+                }
+
+                foreach (var fw in model)
+                {
+                    if (fw == null) continue;
+                    File.Copy(fw.Path, Path.Combine(modelDirectory, Path.GetFileName(fw.Path)), true);
+                }
+            }
+            
+            Directory.Delete(TempDownloadPath, true);
+
+            // Load all firmwares
+            firmware = new DirectoryInfo(RootPath).GetFiles("FOTA_*.bin", SearchOption.AllDirectories)
+                .Select(BuildFirmware)
+                .Where(x => x != null)
+                .Cast<Firmware>()
+                .OrderByDescending(x => x.Year)
+                .ThenByDescending(x => x.Month)
+                .ThenByDescending(x => x.Revision)
+                .GroupBy(x => x.ModelString)
+                .ToList();
+
             
             var indexMd = "# Galaxy Buds Firmware Archive\n\n";
             indexMd += "An automated archive of firmware images for the Galaxy Buds family. " +
@@ -64,11 +94,6 @@ namespace FirmwareProviderCLI
             
             foreach (var model in firmware)
             {
-                var modelDirectory = Path.Combine(RootPath, model.Key);
-                if (!Directory.Exists(modelDirectory))
-                {
-                    Directory.CreateDirectory(modelDirectory);
-                }
 
                 var modelName = Firmware.ModelFromBuild(model.Key).GetAttributeOfType<DescriptionAttribute>().Description;
                 indexMd += $"## {modelName} (SM-{model.Key})\n\n";
@@ -77,9 +102,6 @@ namespace FirmwareProviderCLI
                 foreach (var fw in model)
                 {
                     if(fw == null) continue;
-                    
-                    File.Copy(fw.Path, Path.Combine(modelDirectory, Path.GetFileName(fw.Path)), true);
-                    
                     var url = $"https://github.com/ThePBone/galaxy-buds-firmware-archive/raw/main/{model.Key}/{Path.GetFileName(fw.Path)}";
                     indexMd += $"| [`{fw.BuildName}`]({url}) | {fw.Year} | {DateTimeFormatInfo.InvariantInfo.GetMonthName(fw.Month)} | {fw.Revision} |\n";
                 }
@@ -91,8 +113,6 @@ namespace FirmwareProviderCLI
                        "The firmware binaries are provided as-is. Use at your own risk.\n";
             
             await File.WriteAllTextAsync("README.md", indexMd);
-            
-            Directory.Delete(TempDownloadPath, true);
             
             Console.WriteLine("Done!");
         }
