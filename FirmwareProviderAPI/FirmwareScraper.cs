@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Threading.Tasks;
 using System.Timers;
 using System.Xml;
 using FirmwareProviderAPI.Messaging;
@@ -28,10 +29,10 @@ namespace FirmwareProviderAPI
                 Interval = 600000, // every 10 minutes
                 AutoReset = true
             };
-            _timer.Elapsed += (_, _) => CheckAll();
+            _timer.Elapsed += async (_, _) => await CheckAll();
             _timer.Start();
             
-            CheckAll();
+            _ = CheckAll();
         }
 
         public void Pause()
@@ -44,19 +45,19 @@ namespace FirmwareProviderAPI
             _timer.Start();
         }
 
-        public void CheckAll()
+        public async Task CheckAll()
         {
             CheckForUpdateLegacy("SM-R170");
             CheckForUpdateLegacy("SM-R175");
-            CheckForUpdateFumo("SM-R180");
-            CheckForUpdateFumo("SM-R190");
-            CheckForUpdateFumo("SM-R177");
-            CheckForUpdateFumo("SM-R510");
-            CheckForUpdateFumo("SM-R400N");
+            await CheckForUpdateFumo("SM-R180");
+            await CheckForUpdateFumo("SM-R190");
+            await CheckForUpdateFumo("SM-R177");
+            await CheckForUpdateFumo("SM-R510");
+            await CheckForUpdateFumo("SM-R400N");
         }
 
         #region OMA-DM FUMO server
-        public async void CheckForUpdateFumo(string model)
+        public async Task CheckForUpdateFumo(string model)
         {
             try
             {

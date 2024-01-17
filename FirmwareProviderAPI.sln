@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SamsungFumoClient", "Samsun
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ThePBone.WbXml2", "SamsungFumoClient\ThePBone.WbXml2\ThePBone.WbXml2.csproj", "{A06EED8E-08FA-4ADF-A684-AE2EC8348749}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FirmwareProviderCLI", "FirmwareProviderCLI\FirmwareProviderCLI.csproj", "{04A27DD5-D58F-4194-A60A-1B5AB41BA9D8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{A06EED8E-08FA-4ADF-A684-AE2EC8348749}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A06EED8E-08FA-4ADF-A684-AE2EC8348749}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A06EED8E-08FA-4ADF-A684-AE2EC8348749}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04A27DD5-D58F-4194-A60A-1B5AB41BA9D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04A27DD5-D58F-4194-A60A-1B5AB41BA9D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04A27DD5-D58F-4194-A60A-1B5AB41BA9D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04A27DD5-D58F-4194-A60A-1B5AB41BA9D8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

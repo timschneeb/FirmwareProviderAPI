@@ -15,8 +15,4 @@
     <ItemGroup>
       <ProjectReference Include="..\SamsungFumoClient\SamsungFumoClient\SamsungFumoClient.csproj" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Firmware" />
-    </ItemGroup>
 </Project>
