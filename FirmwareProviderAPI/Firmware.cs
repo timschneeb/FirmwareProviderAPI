@@ -20,6 +20,7 @@ namespace FirmwareProviderAPI
         private readonly string[] _swYear = {"O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
         
         public Models Model { get; }
+        public string ModelString { get; }
         
         public string BuildName { get; }
         public string Region { get; }
@@ -49,15 +50,9 @@ namespace FirmwareProviderAPI
         {
             try
             {
-                Model = build.Substring(0, 4) switch {
-                    "R170" => Models.Buds,
-                    "R175" => Models.BudsPlus,
-                    "R180" => Models.BudsLive,
-                    "R190" => Models.BudsPro,
-                    "R177" => Models.Buds2,
-                    "R510" => Models.Buds2Pro,
-                    _ => Models.Unknown
-                };
+                Model = ModelFromBuild(build);
+
+                ModelString = build.Substring(0, 4);
                 
                 BuildName = build;
                 Path = path;
@@ -73,6 +68,20 @@ namespace FirmwareProviderAPI
             {
                 throw new InvalidDataException("Invalid firmware string", ex);
             }
+        }
+        
+        public static Models ModelFromBuild(string build)
+        {
+            return build.Substring(0, 4) switch {
+                "R170" => Models.Buds,
+                "R175" => Models.BudsPlus,
+                "R180" => Models.BudsLive,
+                "R190" => Models.BudsPro,
+                "R177" => Models.Buds2,
+                "R510" => Models.Buds2Pro,
+                "R400N" => Models.BudsFe,
+                _ => Models.Unknown
+            };
         }
     }
 }
