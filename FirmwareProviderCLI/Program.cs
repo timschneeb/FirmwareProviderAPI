@@ -88,7 +88,7 @@ namespace FirmwareProviderCLI
             foreach (var model in firmware)
             {
                 var modelName = Firmware.ModelFromBuild(model.Key).GetAttributeOfType<DescriptionAttribute>().Description;
-                indexMd += $"- [SM-{model.Key}](#{modelName.ToLower().Replace(' ', '-')}-sm-{model.Key.ToLower()})\n";
+                indexMd += $"- [SM-{model.Key}](#{modelName.ToLower().Replace(' ', '-').Replace("+", "")}-sm-{model.Key.ToLower()})\n";
             }
             indexMd += "\n";
             
