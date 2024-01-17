@@ -54,10 +54,11 @@ namespace FirmwareProviderCLI
                        ">\n" +
                        "> For instance, flashing Galaxy Buds 2 Pro firmware onto the Galaxy Buds Pro will permanently brick your earbuds.\n\n";
             
+            indexMd += "## Table of contents\n\n";
             foreach (var model in firmware)
             {
                 var modelName = Firmware.ModelFromBuild(model.Key).GetAttributeOfType<DescriptionAttribute>().Description;
-                indexMd += $"- [SM-{model.Key}](#sm-{modelName.ToLower().Replace(' ', '-')}-{model.Key.ToLower()})\n";
+                indexMd += $"- [SM-{model.Key}](#{modelName.ToLower().Replace(' ', '-')}-sm-{model.Key.ToLower()})\n";
             }
             indexMd += "\n";
             
