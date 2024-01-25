@@ -72,7 +72,7 @@ namespace FirmwareProviderAPI
         
         public static Models ModelFromBuild(string build)
         {
-            return build.Substring(0, 4) switch {
+            return build.Split("XX").First() switch {
                 "R170" => Models.Buds,
                 "R175" => Models.BudsPlus,
                 "R180" => Models.BudsLive,
