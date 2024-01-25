@@ -52,17 +52,17 @@ namespace FirmwareProviderAPI
             {
                 Model = ModelFromBuild(build);
 
-                ModelString = build.Substring(0, 4);
+                ModelString = build.Split("XX").First();
                 
                 BuildName = build;
                 Path = path;
-                Region = build.Substring(4, 2);
-                BootloaderVersion = build.Substring(6, 2);
-                ReservedField = build[8];
+                Region = build.Substring(ModelString.Length, 2);
+                BootloaderVersion = build.Substring(ModelString.Length + 2, 2);
+                ReservedField = build[ModelString.Length + 4];
                 
-                Year = Array.FindIndex(_swYear, x => x == build[9].ToString()) + 2015;
-                Month = Array.FindIndex(_swMonth, x => x == build[10].ToString()) + 1;
-                Revision = Array.FindIndex(_swRelVer, x => x == build[11].ToString());
+                Year = Array.FindIndex(_swYear, x => x == build[ModelString.Length + 5].ToString()) + 2015;
+                Month = Array.FindIndex(_swMonth, x => x == build[ModelString.Length + 6].ToString()) + 1;
+                Revision = Array.FindIndex(_swRelVer, x => x == build[ModelString.Length + 7].ToString());
             }
             catch (ArgumentOutOfRangeException ex)
             {
