@@ -23,7 +23,9 @@ namespace FirmwareProviderAPI.Controllers
         [Route("/v2/firmware")]
         public async Task<ActionResult<IEnumerable<Firmware>>> GetAll()
         {
-            return FirmwareIndexer.Firmwares.ToList();
+            return FirmwareIndexer.Firmwares
+                .Where(x => x.Model is Models.Buds or Models.BudsPlus or Models.BudsLive or Models.BudsPro or Models.Buds2 or Models.Buds2Pro)
+                .ToList();
         }
         
         // GET: /v2/firmware/buds
