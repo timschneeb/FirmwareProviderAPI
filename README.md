@@ -3,7 +3,7 @@ Unofficial distribution API for Galaxy Buds firmware binaries with built-in FW s
 
 I'm currently hosting an API instance here. I do not provide any uptime guarantee for this server.
 ```
-https://fw.timschneeberger.me/v2/{endpoint}
+https://fw.timschneeberger.me/v3/{endpoint}
 ```
 
 ## API reference
