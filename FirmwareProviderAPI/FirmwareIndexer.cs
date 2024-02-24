@@ -52,9 +52,6 @@ namespace FirmwareProviderAPI
                 .OrderByDescending(x => x.Year)
                 .ThenByDescending(x => x.Month)
                 .ThenByDescending(x => x.Revision)
-                // Disable Buds2 & Buds2Pro due to potential critical bug in GBC
-                .Where(x => x.Model != Models.Buds2Pro) //disable
-                .Where(x => x.Model != Models.Buds2) //disable
                 .ToList();
         }
 

@@ -24,7 +24,7 @@ namespace FirmwareProviderAPI.Controllers
         public async Task<ActionResult<IEnumerable<Firmware>>> GetAll()
         {
             return FirmwareIndexer.Firmwares
-                .Where(x => x.Model is Models.Buds or Models.BudsPlus or Models.BudsLive or Models.BudsPro or Models.Buds2 or Models.Buds2Pro)
+                .Where(x => x.Model is Models.Buds or Models.BudsPlus or Models.BudsLive or Models.BudsPro)
                 .ToList();
         }
         
