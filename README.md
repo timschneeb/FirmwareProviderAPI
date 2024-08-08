@@ -45,7 +45,7 @@ GET /firmware/{model}
   }
 ]
 ```
-`{model}` represents either `Buds`, `BudsPlus`, `BudsLive`, `BudsPro`, or `Buds2`.
+`{model}` represents either `Buds`, `BudsPlus`, `BudsLive`, `BudsPro`, `Buds2`, `Buds2Pro`, `BudsFE`, `Buds3` or `Buds3Pro`.
 
 ### Download firmware
 ```
