@@ -32,6 +32,10 @@ namespace FirmwareProviderCLI
         
         private static async Task Main(string[] args)
         {
+            // Only the regular FirmwareProviderAPI server keeps backups of broken binaries for debug purposes
+            // FirmwareProviderCLI which runs on GitHub Actions does not need to keep backups to keep the repo clean
+            FumoScraper.DiscardCorruptFirmware = true;
+            
             Console.WriteLine("Scraping firmware...");
             Directory.CreateDirectory(TempDownloadPath);
             await FirmwareScraper.CheckAll();
