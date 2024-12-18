@@ -4,6 +4,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using FirmwareProviderAPI.Messaging;
+using FirmwareProviderAPI.Utils;
 using SamsungFumoClient;
 using SamsungFumoClient.Exceptions;
 using SamsungFumoClient.SyncML;
@@ -11,11 +12,14 @@ using SamsungFumoClient.SyncML.Commands;
 using SamsungFumoClient.SyncML.Elements;
 using SamsungFumoClient.SyncML.Enum;
 using SamsungFumoClient.Utils;
+using ArrayUtils = SamsungFumoClient.Utils.ArrayUtils;
 
 namespace FirmwareProviderAPI
 {
     public class FumoScraper
     {
+        public static bool DiscardCorruptFirmware { get; set; } = false;
+        
         public string? DownloadPath { init; get; }
 
         static FumoScraper()
@@ -227,11 +231,31 @@ namespace FirmwareProviderAPI
             var binary = await client.DownloadDataTaskAsync(new Uri(firmwareObject.Uri));
 
             var fwString = firmwareObject.Version.ApplicationProcessor[..4];
+            var isCorrupted = binary.FindPattern(Encoding.ASCII.GetBytes(fwString)) < 0;
 
-            string path;
-            if (Utils.ArrayUtils.FindPattern(binary, Encoding.ASCII.GetBytes(fwString)) < 0)
+            try
             {
-                Log.E<FumoScraper>($"Firmware did not contain '{fwString}' ASCII byte pattern");
+                var fwBinary = new FirmwareBinary(binary);
+                foreach (var segment in fwBinary.Segments)
+                {
+                    if (segment.Size == segment.RawData.Length) 
+                        continue;
+                    
+                    isCorrupted = true;
+                    Log.E<FumoScraper>($"{fwString}: Firmware segment {segment.Id} size mismatch ({segment.Size} != {segment.RawData.Length})");
+                    break;
+                }
+            }
+            catch (FirmwareParseException ex)
+            {
+                Log.E<FumoScraper>(ex.Message);
+                isCorrupted = true;
+            }
+            
+            string path;
+            if (isCorrupted)
+            {
+                Log.E<FumoScraper>($"Firmware failed verification check for {firmwareObject.Version.ApplicationProcessor}");
                 Telegram.Send($"*Firmware verification check failed for {firmwareObject.Version.ApplicationProcessor}*.\n" +
                               $"Manual interaction requested");
                 path = $"{DownloadPath}/DISCARDED_{firmwareObject.Version.ApplicationProcessor}.bin";
@@ -246,9 +270,11 @@ namespace FirmwareProviderAPI
                 // Update already retrieved
                 return;
             }
-            
-            Telegram.Send($"\\[PRD] Firmware update '*{firmwareObject.Version.ApplicationProcessor}*' has been released");
-            await File.WriteAllBytesAsync(path, binary);
+
+            if (!isCorrupted)
+                Telegram.Send($"\\[PRD] Firmware update '*{firmwareObject.Version.ApplicationProcessor}*' has been released");
+            if (!isCorrupted || DiscardCorruptFirmware)
+                await File.WriteAllBytesAsync(path, binary);
         }
     }
 }
