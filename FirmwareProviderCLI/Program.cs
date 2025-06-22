@@ -82,7 +82,7 @@ namespace FirmwareProviderCLI
             
             var indexMd = "# Galaxy Buds Firmware Archive\n\n";
             indexMd += "An automated archive of firmware images for the Galaxy Buds family. " +
-                       "Flashable with the [GalaxyBudsClient application](https://github.com/ThePBone/GalaxyBudsClient).\n\n";
+                       "Flashable with the [GalaxyBudsClient application](https://github.com/timschneeb/GalaxyBudsClient).\n\n";
             indexMd += "> [!CAUTION]\n" +
                        "> Do NOT mix up firmware binaries of different models.\n" +
                        ">\n" +
@@ -106,7 +106,7 @@ namespace FirmwareProviderCLI
                 foreach (var fw in model)
                 {
                     if(fw == null) continue;
-                    var url = $"https://github.com/ThePBone/galaxy-buds-firmware-archive/raw/main/{model.Key}/{Path.GetFileName(fw.Path)}";
+                    var url = $"https://github.com/timschneeb/galaxy-buds-firmware-archive/raw/main/{model.Key}/{Path.GetFileName(fw.Path)}";
                     indexMd += $"| [`{fw.BuildName}`]({url}) | {fw.Year} | {DateTimeFormatInfo.InvariantInfo.GetMonthName(fw.Month)} | {fw.Revision} |\n";
                 }
                 indexMd += "\n";

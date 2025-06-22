@@ -56,6 +56,11 @@ namespace FirmwareProviderAPI
             await CheckForUpdateFumo("SM-R400N");
             await CheckForUpdateFumo("SM-R530");
             await CheckForUpdateFumo("SM-R630");
+            
+            await CheckForUpdateFumo("SM-R420");
+            await CheckForUpdateFumo("SM-R410");
+            await CheckForUpdateFumo("SM-R420N");
+            await CheckForUpdateFumo("SM-R410N");
         }
 
         #region OMA-DM FUMO server
