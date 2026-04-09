@@ -28,5 +28,9 @@ namespace FirmwareProviderAPI
         Buds3Fe, 
         [Description("Galaxy Buds Core")]
         BudsCore,
+        [Description("Galaxy Buds4")]
+        Buds4,
+        [Description("Galaxy Buds4 Pro")]
+        Buds4Pro
     }
 }

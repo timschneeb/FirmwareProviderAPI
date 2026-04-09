@@ -82,6 +82,8 @@ namespace FirmwareProviderAPI
                 "R400N" => Models.BudsFe,
                 "R530" => Models.Buds3,
                 "R630" => Models.Buds3Pro,
+                "R540" => Models.Buds4,
+                "R640" => Models.Buds4Pro,
                 "R420" => Models.Buds3Fe,
                 "R410" => Models.BudsCore,
                 _ => Models.Unknown
