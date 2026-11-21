@@ -3,9 +3,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using FirmwareProviderAPI;
-using Microsoft.OpenApi.Extensions;
 
 namespace FirmwareProviderCLI
 {
@@ -15,6 +15,10 @@ namespace FirmwareProviderCLI
         private static readonly string TempDownloadPath = Path.Combine(RootPath, "Firmware");
         private static readonly FirmwareScraper FirmwareScraper = new(TempDownloadPath);
         
+        private static string GetDescription(Enum value) =>
+            value.GetType().GetField(value.ToString())?.GetCustomAttribute<DescriptionAttribute>()?.Description
+            ?? value.ToString();
+
         private static Firmware? BuildFirmware(FileInfo file)
         {
             try
@@ -91,7 +95,7 @@ namespace FirmwareProviderCLI
             indexMd += "## Table of contents\n\n";
             foreach (var model in firmware)
             {
-                var modelName = Firmware.ModelFromBuild(model.Key).GetAttributeOfType<DescriptionAttribute>().Description;
+                var modelName = GetDescription(Firmware.ModelFromBuild(model.Key));
                 indexMd += $"- [SM-{model.Key}](#{modelName.ToLower().Replace(' ', '-').Replace("+", "")}-sm-{model.Key.ToLower()})\n";
             }
             indexMd += "\n";
@@ -99,7 +103,7 @@ namespace FirmwareProviderCLI
             foreach (var model in firmware)
             {
 
-                var modelName = Firmware.ModelFromBuild(model.Key).GetAttributeOfType<DescriptionAttribute>().Description;
+                var modelName = GetDescription(Firmware.ModelFromBuild(model.Key));
                 indexMd += $"## {modelName} (SM-{model.Key})\n\n";
                 indexMd += "| Build | Year | Month | Revision |\n";
                 indexMd += "| ----- | ---- | ----- | -------- |\n";

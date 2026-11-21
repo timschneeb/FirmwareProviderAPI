@@ -37,7 +37,7 @@ namespace FirmwareProviderAPI
             _fileChangeToken.RegisterChangeCallback(Notify, default);
         }
         
-        private static void Notify(object state)
+        private static void Notify(object? state)
         {
             Rescan();
             WatchForFileChanges();

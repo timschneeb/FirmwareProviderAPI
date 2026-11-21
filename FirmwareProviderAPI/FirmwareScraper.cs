@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Timers;
 using System.Xml;
@@ -11,6 +11,7 @@ namespace FirmwareProviderAPI
     public class FirmwareScraper : IDisposable
     {
         private const string LegacyApiRequest = "https://wsu-dms.samsungdm.com/common/support/firmware/downloadUrlList.do?prd_mdl_name={0}FOTA&loc=global";
+        private static readonly HttpClient Http = new();
         private readonly string _targetPath;
         
         private readonly Timer _timer;
@@ -47,8 +48,8 @@ namespace FirmwareProviderAPI
 
         public async Task CheckAll()
         {
-            CheckForUpdateLegacy("SM-R170");
-            CheckForUpdateLegacy("SM-R175");
+            await CheckForUpdateLegacy("SM-R170");
+            await CheckForUpdateLegacy("SM-R175");
             await CheckForUpdateFumo("SM-R180");
             await CheckForUpdateFumo("SM-R190");
             await CheckForUpdateFumo("SM-R177");
@@ -87,11 +88,12 @@ namespace FirmwareProviderAPI
         #endregion
         
         #region Legacy DM server
-        public bool CheckForUpdateLegacy(string device)
+        public async Task<bool> CheckForUpdateLegacy(string device)
         {
             try
             {
-                var reader = new XmlTextReader(string.Format(LegacyApiRequest, device.ToUpper()));
+                await using var response = await Http.GetStreamAsync(string.Format(LegacyApiRequest, device.ToUpper()));
+                using var reader = new XmlTextReader(response);
                 string? url = null;
                 string? name = null;
                 while (reader.Read())
@@ -128,8 +130,9 @@ namespace FirmwareProviderAPI
                     return false;
                 }
 
-                using var client = new WebClient();
-                client.DownloadFile(new Uri(url), path);
+                // Download fully before writing so a failed transfer never leaves a partial file behind
+                var binary = await Http.GetByteArrayAsync(url);
+                await File.WriteAllBytesAsync(path, binary);
                 return true;
             }
             catch (Exception ex)

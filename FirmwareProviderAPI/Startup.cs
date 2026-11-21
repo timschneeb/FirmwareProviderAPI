@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,8 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.OpenApi.Any;
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Newtonsoft.Json.Converters;
 
 namespace FirmwareProviderAPI
@@ -49,9 +49,8 @@ namespace FirmwareProviderAPI
                         {
                             c.MapType(t, () => new OpenApiSchema
                             {
-                                Type = "string",
-                                Enum = t.GetEnumNames().Select(name => new OpenApiString(name)).Cast<IOpenApiAny>().ToList(),
-                                Nullable = true
+                                Type = JsonSchemaType.String | JsonSchemaType.Null,
+                                Enum = t.GetEnumNames().Select(name => (JsonNode)JsonValue.Create(name)).ToList()
                             });
                         }
                     }
@@ -65,7 +64,7 @@ namespace FirmwareProviderAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger(c => c.SerializeAsV2 = true);
+                app.UseSwagger(c => c.OpenApiVersion = OpenApiSpecVersion.OpenApi2_0);
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FirmwareProviderAPI v1"));
             }
 
