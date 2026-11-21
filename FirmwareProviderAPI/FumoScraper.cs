@@ -39,12 +39,12 @@ namespace FirmwareProviderAPI
             };
         }
         
-        public async Task<FirmwareObject?> FindUpdate(string model)
+        public async Task<FirmwareObject?> FindUpdate(string model, string customerCode = "KOO")
         {
             var device = new Device
             {
                 Model = model,
-                CustomerCode = "KOO",
+                CustomerCode = customerCode,
             };
 
             var session = new DmSession(device);
@@ -233,23 +233,35 @@ namespace FirmwareProviderAPI
             var fwString = firmwareObject.Version.ApplicationProcessor[..4];
             var isCorrupted = binary.FindPattern(Encoding.ASCII.GetBytes(fwString)) < 0;
 
-            try
+            if (FirmwareBinary.IsBudsCoreContainer(binary))
             {
-                var fwBinary = new FirmwareBinary(binary);
-                foreach (var segment in fwBinary.Segments)
+                // FirmwareBinary cannot parse this container, so compare it with the MD5 from the download descriptor instead
+                if (!FirmwareBinary.MatchesMd5(binary, firmwareObject.Md5))
                 {
-                    if (segment.Size == segment.RawData.Length) 
-                        continue;
-                    
                     isCorrupted = true;
-                    Log.E<FumoScraper>($"{fwString}: Firmware segment {segment.Id} size mismatch ({segment.Size} != {segment.RawData.Length})");
-                    break;
+                    Log.E<FumoScraper>($"{fwString}: Firmware MD5 does not match the download descriptor ({firmwareObject.Md5})");
                 }
             }
-            catch (FirmwareParseException ex)
+            else
             {
-                Log.E<FumoScraper>(ex.Message);
-                isCorrupted = true;
+                try
+                {
+                    var fwBinary = new FirmwareBinary(binary);
+                    foreach (var segment in fwBinary.Segments)
+                    {
+                        if (segment.Size == segment.RawData.Length) 
+                            continue;
+                    
+                        isCorrupted = true;
+                        Log.E<FumoScraper>($"{fwString}: Firmware segment {segment.Id} size mismatch ({segment.Size} != {segment.RawData.Length})");
+                        break;
+                    }
+                }
+                catch (FirmwareParseException ex)
+                {
+                    Log.E<FumoScraper>(ex.Message);
+                    isCorrupted = true;
+                }
             }
             
             string path;
