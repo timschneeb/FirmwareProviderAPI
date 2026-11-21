@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using FirmwareProviderAPI.Messaging;
@@ -18,6 +18,8 @@ namespace FirmwareProviderAPI
 {
     public class FumoScraper
     {
+        private static readonly HttpClient Http = new();
+
         public static bool DiscardCorruptFirmware { get; set; } = false;
         
         public string? DownloadPath { init; get; }
@@ -227,8 +229,7 @@ namespace FirmwareProviderAPI
                 return;
             }
             
-            using var client = new WebClient();
-            var binary = await client.DownloadDataTaskAsync(new Uri(firmwareObject.Uri));
+            var binary = await Http.GetByteArrayAsync(new Uri(firmwareObject.Uri));
 
             var fwString = firmwareObject.Version.ApplicationProcessor[..4];
             var isCorrupted = binary.FindPattern(Encoding.ASCII.GetBytes(fwString)) < 0;
