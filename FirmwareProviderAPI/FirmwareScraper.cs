@@ -60,15 +60,16 @@ namespace FirmwareProviderAPI
             await CheckForUpdateFumo("SM-R640");
             
             await CheckForUpdateFumo("SM-R420");
-            await CheckForUpdateFumo("SM-R410");
+            // Buds Core firmware is not published for KOO, only for regions such as ZTO, INU, XME and MXO
+            await CheckForUpdateFumo("SM-R410", "ZTO");
         }
 
         #region OMA-DM FUMO server
-        public async Task CheckForUpdateFumo(string model)
+        public async Task CheckForUpdateFumo(string model, string customerCode = "KOO")
         {
             try
             {
-                var fwObj = await _fumoScraper.FindUpdate(model);
+                var fwObj = await _fumoScraper.FindUpdate(model, customerCode);
                 if (fwObj == null)
                 {
                     return;

@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using FirmwareProviderAPI.Utils;
 
 namespace FirmwareProviderAPI;
@@ -9,6 +10,8 @@ public class FirmwareBinary
 {
     public const long FotaBinMagic = 0xCAFECAFE;
     public const long FotaBinMagicCombination = 0x42434F4D;
+    // Buds Core (SM-R410) firmware uses a different container that this class cannot parse
+    public const long FotaBinMagicBudsCore = 0xABCDABCD;
 
     public long Magic { get; }
     public long SegmentsCount { get; }
@@ -55,6 +58,16 @@ public class FirmwareBinary
         {
             throw new FirmwareParseException(FirmwareParseException.ErrorCodes.Unknown, ex.ToString());
         }
+    }
+
+    public static bool IsBudsCoreContainer(byte[] data)
+    {
+        return data.Length >= 4 && BitConverter.ToUInt32(data, 0) == FotaBinMagicBudsCore;
+    }
+
+    public static bool MatchesMd5(byte[] data, string? md5)
+    {
+        return Convert.ToHexString(MD5.HashData(data)).Equals(md5, StringComparison.OrdinalIgnoreCase);
     }
 
     public byte[] SerializeTable()
